@@ -1,0 +1,2 @@
+package com.studioelengomes.StudioElenGomes.api.dto;
+public record LoginRequest(String username, String password) {}
