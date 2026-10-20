@@ -40,6 +40,16 @@ public class Servico {
     @Column(name = "requer_retorno", nullable = false)
     private Boolean requerRetorno = false;
 
+    /** Aparece na página pública de agendamento. */
+    @Builder.Default
+    @Column(nullable = false)
+    private Boolean online = true;
+
+    /** Mostra "a partir de" antes do preço (preço varia conforme o cabelo). */
+    @Builder.Default
+    @Column(name = "preco_a_partir", nullable = false)
+    private Boolean precoAPartir = true;
+
     @Column(name = "dias_para_retorno")
     private Integer diasParaRetorno;
 }

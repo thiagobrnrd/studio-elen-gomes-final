@@ -41,6 +41,16 @@ export default function Agenda() {
     } catch (e) { toastErro(e); }
   }
 
+  async function responder(a: Agendamento, acao: 'aprovar' | 'recusar') {
+    if (acao === 'recusar' && !confirm(`Recusar o pedido de ${a.clienteNome}? O horário será liberado.`)) return;
+    try {
+      await api(`/pedidos/${a.id}/${acao}`, { method: 'POST', body: acao === 'recusar' ? JSON.stringify({ motivo: 'Horário indisponível' }) : undefined });
+      toast(acao === 'aprovar' ? 'Pedido aprovado. Avise a cliente pela aba Pedidos ou pelo WhatsApp.' : 'Pedido recusado.');
+      window.dispatchEvent(new Event('pedidos-respondidos'));
+      load();
+    } catch (e) { toastErro(e); }
+  }
+
   const ativos = (list || []).filter((a) => a.status !== 'CANCELADO');
   const previsto = ativos.reduce((s, a) => s + Number(a.valor || 0), 0);
 
@@ -73,15 +83,19 @@ export default function Agenda() {
             const link = waLink(a.whatsapp, msg);
             return <tr key={a.id} className={'is-' + a.status.toLowerCase()}>
               <td className="time-cell"><b>{hora(a.dataHora)}</b><small>{a.duracaoMin} min</small></td>
-              <td className="client-cell"><b>{a.clienteNome}</b><small>{a.telefone}</small>{a.observacoes && <div className="obs">{a.observacoes}</div>}</td>
+              <td className="client-cell"><b>{a.clienteNome}</b>{a.origem === 'ONLINE' && <span className="tag-online" title="Agendado pela cliente no link">online</span>}<small>{a.telefone}</small>{a.observacoes && <div className="obs">{a.observacoes}</div>}</td>
               <td>{a.servicoNome}</td>
               <td>{money(a.valor)}</td>
               <td><span className={'badge ' + a.status.toLowerCase()}>{STATUS_LABEL[a.status]}</span>{a.pago && <> <span className="badge pago">Pago</span></>}</td>
               <td><div className="row-actions">
+                {a.status === 'SOLICITADO' && <>
+                  <button className="btn small primary" onClick={() => responder(a, 'aprovar')}>✓ Aprovar</button>
+                  <button className="btn small danger" onClick={() => responder(a, 'recusar')}>Recusar</button>
+                </>}
                 {link && aberto && <a className="btn small whats" href={link} target="_blank" rel="noreferrer">WhatsApp</a>}
                 {a.status === 'AGENDADO' && <button className="btn small" onClick={() => status(a, 'CONFIRMADO')}>Confirmar</button>}
                 {aberto && <button className="btn small" onClick={() => setRes(a)}>Remarcar</button>}
-                {!a.pago && a.status !== 'CANCELADO' && <button className="btn small" onClick={() => setPay(a)}>Receber</button>}
+                {!a.pago && a.status !== 'CANCELADO' && a.status !== 'SOLICITADO' && <button className="btn small" onClick={() => setPay(a)}>Receber</button>}
                 {aberto && <button className="btn small danger" onClick={() => status(a, 'CANCELADO')}>Cancelar</button>}
                 {a.status === 'CANCELADO' && <button className="btn small" onClick={() => status(a, 'AGENDADO')}>Reativar</button>}
               </div></td>

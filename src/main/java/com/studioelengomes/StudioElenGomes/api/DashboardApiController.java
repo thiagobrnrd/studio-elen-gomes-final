@@ -19,6 +19,7 @@ public class DashboardApiController {
     private final ServicoService sv;
     private final LembreteWhatsAppService lm;
     private final PagamentoRepository pagamentos;
+    private final PedidoOnlineService pedidos;
 
     @GetMapping
     public DashboardDto dashboard() {
@@ -32,6 +33,7 @@ public class DashboardApiController {
                 ag.contarAgendamentosPendentes(),
                 lm.contarPendentes(),
                 faturamento,
-                hoje.stream().map(ApiMapper::agendamento).toList());
+                hoje.stream().map(ApiMapper::agendamento).toList(),
+                pedidos.contarPendentes());
     }
 }

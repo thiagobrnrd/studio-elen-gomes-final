@@ -6,7 +6,7 @@ import { Modal, Loading, ErrorBox, toast, toastErro } from '../../components/ui'
 import { api, Servico } from '../../lib/api';
 import { money } from '../../lib/format';
 
-const vazio: Servico = { nome: '', descricao: '', duracaoMin: 60, preco: 0, ativo: true, requerRetorno: false, diasParaRetorno: null };
+const vazio: Servico = { nome: '', descricao: '', duracaoMin: 60, preco: 0, ativo: true, requerRetorno: false, diasParaRetorno: null, online: true, precoAPartir: true };
 
 export default function Servicos() {
   const [list, setList] = useState<Servico[] | null>(null);
@@ -26,15 +26,15 @@ export default function Servicos() {
 
   return <Guard><Shell>
     <header className="topbar">
-      <div><div className="eyebrow">Catálogo</div><h1>Serviços</h1><p className="page-subtitle">Preço, duração e retorno de cada procedimento.</p></div>
+      <div style={{ minWidth: 0 }}><div className="eyebrow" style={{ whiteSpace: 'nowrap' }}>Catálogo</div><h1>Serviços</h1><p className="page-subtitle">Preço, duração e retorno de cada procedimento.</p></div>
       <button className="btn primary" onClick={() => setForm({ ...vazio })}>+ Novo serviço</button>
     </header>
     {err && <ErrorBox error={err} onRetry={load} />}
     {list === null ? <div className="card"><Loading /></div> : <>
       <div className="grid service-grid">{list.map((s) => <div className={'card service-card' + (s.ativo ? '' : ' off')} key={s.id}>
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10 }}>
-          <div><div className="eyebrow">{s.ativo ? 'Ativo' : 'Inativo'}</div><h3>{s.nome}</h3></div>
-          <span className="price">{money(s.preco)}</span>
+          <div style={{ minWidth: 0 }}><div className="eyebrow" style={{ whiteSpace: 'nowrap' }}>{s.ativo ? 'Ativo' : 'Inativo'}{s.ativo && s.online !== false && <span className="tag-online" style={{ marginLeft: 8 }}>online</span>}</div><h3>{s.nome}</h3></div>
+          <span className="price">{s.precoAPartir !== false && <small className="apartir">a partir de </small>}{money(s.preco)}</span>
         </div>
         <span className="muted" style={{ fontSize: 13 }}>{s.descricao || 'Sem descrição.'}</span>
         <span className="muted" style={{ fontSize: 12 }}>⏱ {s.duracaoMin} min{s.requerRetorno && s.diasParaRetorno ? ` · retorno em ${s.diasParaRetorno} dias` : ''}</span>
@@ -58,6 +58,7 @@ function FormServico({ inicial, onClose, onSaved }: { inicial: Servico; onClose:
       const body = {
         nome: f.nome, descricao: f.descricao || null, ativo: f.ativo,
         preco: Number(String(f.preco).replace(',', '.')), duracaoMin: Number(f.duracaoMin),
+        online: f.online !== false, precoAPartir: f.precoAPartir !== false,
         requerRetorno: f.requerRetorno, diasParaRetorno: f.requerRetorno ? Number(f.diasParaRetorno) : null,
       };
       await api('/servicos' + (f.id ? `/${f.id}` : ''), { method: f.id ? 'PUT' : 'POST', body: JSON.stringify(body) });
@@ -71,6 +72,8 @@ function FormServico({ inicial, onClose, onSaved }: { inicial: Servico; onClose:
         <div className="field"><label>Duração (min)</label><input type="number" required min={5} step={5} value={f.duracaoMin} onChange={(e) => setF({ ...f, duracaoMin: e.target.value })} /></div>
         <div className="field"><label>Preço (R$)</label><input inputMode="decimal" required value={f.preco} onChange={(e) => setF({ ...f, preco: e.target.value })} /></div>
         <div className="field full"><label>Descrição</label><textarea rows={2} value={f.descricao || ''} onChange={(e) => setF({ ...f, descricao: e.target.value })} /></div>
+        <div className="field full"><label className="check"><input type="checkbox" checked={f.precoAPartir !== false} onChange={(e) => setF({ ...f, precoAPartir: e.target.checked })} /> Mostrar “a partir de” antes do preço (valor varia conforme o cabelo)</label></div>
+        <div className="field full"><label className="check"><input type="checkbox" checked={f.online !== false} onChange={(e) => setF({ ...f, online: e.target.checked })} /> Aparece no agendamento online (link das clientes)</label></div>
         <div className="field full"><label className="check"><input type="checkbox" checked={f.requerRetorno} onChange={(e) => setF({ ...f, requerRetorno: e.target.checked })} /> Lembrar a cliente de voltar (retorno)</label></div>
         {f.requerRetorno && <div className="field"><label>Retorno após quantos dias?</label><input type="number" required min={1} value={f.diasParaRetorno} onChange={(e) => setF({ ...f, diasParaRetorno: e.target.value })} placeholder="ex.: 30" /></div>}
       </div>

@@ -14,7 +14,7 @@ public final class ApiMapper {
 
     public static ServicoDto servico(Servico s) {
         return new ServicoDto(s.getId(), s.getNome(), s.getDescricao(), s.getDuracaoMin(), s.getPreco(), s.getAtivo(),
-                s.getRequerRetorno(), s.getDiasParaRetorno());
+                s.getRequerRetorno(), s.getDiasParaRetorno(), s.getOnline(), s.getPrecoAPartir());
     }
 
     public static AgendamentoDto agendamento(Agendamento a) {
@@ -25,6 +25,7 @@ public final class ApiMapper {
         return new AgendamentoDto(a.getId(), a.getCliente().getId(), a.getCliente().getNome(), a.getCliente().getTelefone(),
                 TelefoneUtil.paraWhatsApp(a.getCliente().getTelefone()).orElse(null),
                 a.getServico().getId(), a.getServico().getNome(), a.getServico().getDuracaoMin(), a.getServico().getPreco(),
-                a.getDataHora(), a.getStatus().name(), a.getObservacoes(), pago);
+                a.getDataHora(), a.getStatus().name(), a.getObservacoes(), pago,
+                a.getOrigem(), a.getMotivoCancelamento(), a.getCriadoEm(), a.getToken());
     }
 }

@@ -6,7 +6,7 @@ import { ErrorBox, Loading } from '../../components/ui';
 import { api, Agendamento, Lembrete } from '../../lib/api';
 import { hora, dataHora, money, STATUS_LABEL } from '../../lib/format';
 
-type D = { atendimentosHoje: number; clientes: number; servicosAtivos: number; pendentes: number; lembretesPendentes: number; faturamentoHoje: number; proximos: Agendamento[] };
+type D = { atendimentosHoje: number; clientes: number; servicosAtivos: number; pendentes: number; lembretesPendentes: number; faturamentoHoje: number; proximos: Agendamento[]; pedidosPendentes: number };
 type R = { aniversarios: { clienteId: string; clienteNome: string; dias: number; link?: string }[] };
 type C = { horarios: Lembrete[]; retornos: Lembrete[] };
 
@@ -31,6 +31,9 @@ export default function Dashboard() {
     <header className="topbar"><div><div className="eyebrow">Studio Elen Gomes</div><h1>{saudacao}, Elen</h1><p className="page-subtitle">O que merece atenção hoje, em um só lugar.</p></div>
       <div className="top-actions"><a className="btn primary" href="/agenda">+ Novo agendamento</a></div></header>
     {err && <ErrorBox error={err} onRetry={load} />}
+    {d && d.pedidosPendentes > 0 && <a className="pedidos-banner" href="/pedidos">
+      <span className="pb-ico">✉</span><span><b>{d.pedidosPendentes} pedido{d.pedidosPendentes > 1 ? 's' : ''} de agendamento online</b> aguardando sua aprovação</span><span className="arrow">Responder →</span>
+    </a>}
 
     <div className="grid stats">{[
       ['Atendimentos hoje', d?.atendimentosHoje ?? '–', 'na agenda'],

@@ -33,7 +33,7 @@ public class SecurityConfig {
                 }))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
-                .requestMatchers("/api/auth/login", "/api/health", "/error").permitAll()
+                .requestMatchers("/api/auth/login", "/api/health", "/api/publico/**", "/error").permitAll()
                 .requestMatchers("/api/**").authenticated()
                 .anyRequest().permitAll())
             .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);

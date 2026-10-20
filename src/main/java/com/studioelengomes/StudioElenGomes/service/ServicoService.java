@@ -29,6 +29,12 @@ public class ServicoService {
     }
 
     @Transactional(readOnly = true)
+    public List<Servico> listarOnline() {
+        return servicoRepository.findByAtivoTrueOrderByNomeAsc().stream()
+                .filter(s -> Boolean.TRUE.equals(s.getOnline())).toList();
+    }
+
+    @Transactional(readOnly = true)
     public Servico buscarPorId(String id) {
         return servicoRepository.findById(id)
                 .orElseThrow(() -> new NaoEncontradoException("Serviço não encontrado"));
@@ -52,6 +58,8 @@ public class ServicoService {
         atual.setAtivo(dados.getAtivo());
         atual.setRequerRetorno(dados.getRequerRetorno());
         atual.setDiasParaRetorno(dados.getDiasParaRetorno());
+        atual.setOnline(dados.getOnline());
+        atual.setPrecoAPartir(dados.getPrecoAPartir());
         return servicoRepository.save(atual);
     }
 
@@ -75,6 +83,8 @@ public class ServicoService {
         if (s.getNome() != null) s.setNome(s.getNome().trim());
         if (s.getAtivo() == null) s.setAtivo(true);
         if (s.getRequerRetorno() == null) s.setRequerRetorno(false);
+        if (s.getOnline() == null) s.setOnline(true);
+        if (s.getPrecoAPartir() == null) s.setPrecoAPartir(true);
         if (!s.getRequerRetorno()) s.setDiasParaRetorno(null);
         if (s.getRequerRetorno() && (s.getDiasParaRetorno() == null || s.getDiasParaRetorno() <= 0)) {
             throw new IllegalArgumentException("Informe em quantos dias a cliente deve voltar.");

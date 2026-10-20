@@ -14,4 +14,5 @@ public class StudioElenGomesApplication {
 		java.util.TimeZone.setDefault(java.util.TimeZone.getTimeZone("America/Sao_Paulo"));
 		SpringApplication.run(StudioElenGomesApplication.class, args);
 	}
+
 }

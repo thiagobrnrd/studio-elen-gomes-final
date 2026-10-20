@@ -30,4 +30,22 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, String
     boolean existsByServicoId(String servicoId);
 
     long countByClienteId(String clienteId);
+
+    // ─── Agendamento online ───────────────────────────────────────────
+    java.util.Optional<Agendamento> findByToken(String token);
+
+
+    long countByStatus(Agendamento.Status status);
+
+    long countByClienteIdAndStatusAndDataHoraAfter(String clienteId, Agendamento.Status status, LocalDateTime dataHora);
+
+    boolean existsByClienteIdAndDataHoraAndStatusNot(String clienteId, LocalDateTime dataHora, Agendamento.Status status);
+
+    List<Agendamento> findTop15ByOrigemAndStatusNotOrderByAtualizadoEmDesc(String origem, Agendamento.Status status);
+
+    Agendamento findFirstByStatusOrderByCriadoEmDesc(Agendamento.Status status);
+
+    /** Trava curta (dentro da transação) para dois pedidos simultâneos não pegarem o mesmo horário. */
+    @org.springframework.data.jpa.repository.Query(value = "select 1 from (select pg_advisory_xact_lock(4242)) t", nativeQuery = true)
+    Integer travarAgenda();
 }

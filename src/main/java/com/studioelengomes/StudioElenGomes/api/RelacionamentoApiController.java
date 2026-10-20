@@ -6,6 +6,7 @@ import com.studioelengomes.StudioElenGomes.repository.AgendamentoRepository;
 import com.studioelengomes.StudioElenGomes.repository.ClienteRepository;
 import com.studioelengomes.StudioElenGomes.service.AgendamentoService;
 import com.studioelengomes.StudioElenGomes.service.ServicoService;
+import com.studioelengomes.StudioElenGomes.service.DisponibilidadeService;
 import com.studioelengomes.StudioElenGomes.util.MensagemLembrete;
 import org.springframework.transaction.annotation.Transactional;
 import com.studioelengomes.StudioElenGomes.util.TelefoneUtil;
@@ -26,12 +27,8 @@ public class RelacionamentoApiController {
     private final AgendamentoRepository agendamentoRepository;
     private final AgendamentoService agendamentoService;
     private final ServicoService servicoService;
+    private final DisponibilidadeService disponibilidadeService;
 
-    @Value("${studio.horario.abertura:09:00}")
-    private String abertura;
-
-    @Value("${studio.horario.fechamento:19:00}")
-    private String fechamento;
 
     @Value("${studio.nome:Studio Elen Gomes}")
     private String studioNome;
@@ -43,7 +40,6 @@ public class RelacionamentoApiController {
     public record Suggestion(String tipo, String titulo, String descricao, String clienteId, String clienteNome,
                              String link) {}
     public record Resumo(List<Birthday> aniversarios, List<Confirmacao> confirmacoes, List<Suggestion> sugestoes) {}
-    public record Slot(LocalDateTime dataHora, String hora) {}
 
     @GetMapping("/resumo")
     @Transactional(readOnly = true)
@@ -98,9 +94,9 @@ public class RelacionamentoApiController {
      */
     @GetMapping("/horarios-disponiveis")
     @Transactional(readOnly = true)
-    public List<Slot> horariosDisponiveis(@RequestParam(required = false) String agendamentoId,
-                                          @RequestParam(required = false) String servicoId,
-                                          @RequestParam String data) {
+    public List<DisponibilidadeService.Slot> horariosDisponiveis(@RequestParam(required = false) String agendamentoId,
+                                                                 @RequestParam(required = false) String servicoId,
+                                                                 @RequestParam String data) {
         int duracao;
         if (agendamentoId != null && !agendamentoId.isBlank()) {
             duracao = agendamentoService.buscarPorId(agendamentoId).getServico().getDuracaoMin();
@@ -109,21 +105,7 @@ public class RelacionamentoApiController {
         } else {
             throw new IllegalArgumentException("Informe o serviço.");
         }
-        LocalDate dia = LocalDate.parse(data);
-        LocalTime inicio = LocalTime.parse(abertura);
-        LocalTime fim = LocalTime.parse(fechamento);
-        LocalDateTime agora = LocalDateTime.now(ZONA);
-
-        List<Slot> slots = new ArrayList<>();
-        for (LocalTime hora = inicio; !hora.plusMinutes(duracao).isAfter(fim); hora = hora.plusMinutes(30)) {
-            LocalDateTime candidato = LocalDateTime.of(dia, hora);
-            if (candidato.isBefore(agora)) continue;
-            if (!agendamentoService.temConflito(candidato, duracao, agendamentoId)) {
-                slots.add(new Slot(candidato, hora.toString()));
-            }
-            if (hora.plusMinutes(30).isBefore(hora)) break; // virou o dia
-        }
-        return slots;
+        return disponibilidadeService.horarios(LocalDate.parse(data), duracao, agendamentoId, false);
     }
 
     private Birthday birthday(Cliente c, LocalDate hoje) {

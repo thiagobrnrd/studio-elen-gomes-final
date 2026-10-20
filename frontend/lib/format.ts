@@ -4,6 +4,9 @@
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
+/** Preço para a cliente: "a partir de R$ 90,00" quando o valor varia. */
+export function precoCliente(v: number, aPartir?: boolean) { return (aPartir ? 'a partir de ' : '') + money(v); }
+
 export function hojeISO(d = new Date()) {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
@@ -52,5 +55,48 @@ export function mascaraTelefone(v: string) {
 }
 
 export const STATUS_LABEL: Record<string, string> = {
-  AGENDADO: 'Agendado', CONFIRMADO: 'Confirmado', CONCLUIDO: 'Concluído', CANCELADO: 'Cancelado',
+  SOLICITADO: 'Aguardando', AGENDADO: 'Agendado', CONFIRMADO: 'Confirmado', CONCLUIDO: 'Concluído', CANCELADO: 'Cancelado',
 };
+
+export const diaSemanaCurto = (iso: string) =>
+  parseLocal(iso).toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.', '');
+export const mesCurto = (iso: string) =>
+  parseLocal(iso).toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '');
+export const dataHoraLonga = (s: string) => `${dataLonga(s.slice(0, 10))}, às ${hora(s)}`;
+
+const DIAS = ['', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+/** [2,3,4,5,6] → "Ter a Sáb"; [1,3,5] → "Seg, Qua, Sex". */
+export function resumoDias(dias: number[]) {
+  const d = [...dias].sort((a, b) => a - b);
+  if (!d.length) return '';
+  const seguidos = d.every((v, i) => i === 0 || v === d[i - 1] + 1);
+  if (seguidos && d.length > 2) return `${DIAS[d[0]]} a ${DIAS[d[d.length - 1]]}`;
+  return d.map((x) => DIAS[x]).join(', ');
+}
+
+/** Arquivo .ics para "Adicionar ao calendário" (funciona no iPhone, Android e Outlook). */
+export function baixarIcs(titulo: string, inicioIso: string, duracaoMin: number, local?: string | null, descricao?: string) {
+  const ini = parseLocal(inicioIso);
+  const fim = new Date(ini.getTime() + duracaoMin * 60000);
+  const f = (d: Date) => `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}00`;
+  const esc = (t: string) => t.replace(/[\\,;]/g, (m) => '\\' + m).replace(/\n/g, '\\n');
+  const ics = [
+    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Studio Elen Gomes//Agenda//PT-BR', 'CALSCALE:GREGORIAN',
+    'BEGIN:VTIMEZONE', 'TZID:America/Sao_Paulo', 'BEGIN:STANDARD', 'DTSTART:19700101T000000', 'TZOFFSETFROM:-0300', 'TZOFFSETTO:-0300', 'END:STANDARD', 'END:VTIMEZONE',
+    'BEGIN:VEVENT',
+    `UID:${f(ini)}-${Math.random().toString(36).slice(2)}@studioelengomes`,
+    `DTSTAMP:${f(new Date())}`,
+    `DTSTART;TZID=America/Sao_Paulo:${f(ini)}`,
+    `DTEND;TZID=America/Sao_Paulo:${f(fim)}`,
+    `SUMMARY:${esc(titulo)}`,
+    local ? `LOCATION:${esc(local)}` : '',
+    descricao ? `DESCRIPTION:${esc(descricao)}` : '',
+    'BEGIN:VALARM', 'TRIGGER:-PT2H', 'ACTION:DISPLAY', `DESCRIPTION:${esc(titulo)}`, 'END:VALARM',
+    'END:VEVENT', 'END:VCALENDAR',
+  ].filter(Boolean).join('\r\n');
+  const url = URL.createObjectURL(new Blob([ics], { type: 'text/calendar;charset=utf-8' }));
+  const a = document.createElement('a');
+  a.href = url; a.download = 'studio-elen-gomes.ics';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}

@@ -47,11 +47,12 @@ export async function api<T>(path: string, options: RequestInit = {}, tentativa 
 }
 
 // ─── Tipos compartilhados ──────────────────────────────────────────
-export type Status = 'AGENDADO' | 'CONFIRMADO' | 'CONCLUIDO' | 'CANCELADO';
+export type Status = 'SOLICITADO' | 'AGENDADO' | 'CONFIRMADO' | 'CONCLUIDO' | 'CANCELADO';
 export type Agendamento = {
   id: string; clienteId: string; clienteNome: string; telefone: string; whatsapp: string | null;
-  servicoId: string; servicoNome: string; duracaoMin: number; valor: number;
+  servicoId: string; servicoNome: string; duracaoMin: number; valor: number; precoAPartir?: boolean;
   dataHora: string; status: Status; observacoes?: string | null; pago: boolean;
+  origem?: 'STUDIO' | 'ONLINE'; motivoCancelamento?: string | null; criadoEm?: string | null; token?: string | null;
 };
 export type Cliente = {
   id?: string; nome: string; telefone: string; email?: string | null; dataNascimento?: string | null;
@@ -59,11 +60,34 @@ export type Cliente = {
 };
 export type Servico = {
   id?: string; nome: string; descricao?: string | null; duracaoMin: number; preco: number;
-  ativo: boolean; requerRetorno: boolean; diasParaRetorno?: number | null;
+  ativo: boolean; requerRetorno: boolean; diasParaRetorno?: number | null; online?: boolean; precoAPartir?: boolean;
 };
 export type Slot = { dataHora: string; hora: string };
 export type Lembrete = {
   agendamentoId: string; notificacaoId?: number | null; tipo: 'LEMBRETE_24H' | 'LEMBRETE_RETORNO';
   clienteId: string; clienteNome: string; telefone: string; servicoNome: string; dataHora: string;
   mensagem: string; link: string | null;
+};
+
+/** Chamadas da página pública /agendar (sem login). */
+export async function publicApi<T>(path: string, options: RequestInit = {}): Promise<T> {
+  const headers = new Headers(options.headers);
+  if (options.body) headers.set('Content-Type', 'application/json');
+  let res: Response;
+  try {
+    res = await fetch(`${API}/publico${path}`, { ...options, headers, cache: 'no-store' });
+  } catch {
+    throw new Error('Não foi possível conectar. Verifique sua internet e tente novamente.');
+  }
+  const text = await res.text();
+  let data: any = null;
+  try { data = text ? JSON.parse(text) : null; } catch { data = null; }
+  if (!res.ok) throw new Error(data?.message || 'Algo deu errado. Tente novamente em instantes.');
+  return data as T;
+}
+
+export type PedidoPublico = {
+  token: string; status: Status; clienteNome: string; servicoNome: string; duracaoMin: number; valor: number; precoAPartir?: boolean;
+  dataHora: string; observacoes?: string | null; motivo?: string | null; podeCancelar: boolean;
+  studioNome: string; studioWhatsapp?: string | null; endereco?: string | null; politica?: string | null;
 };

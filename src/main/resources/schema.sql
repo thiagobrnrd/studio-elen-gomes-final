@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS agendamentos (
     servico_id  VARCHAR(36) NOT NULL REFERENCES servicos (id),
     data_hora   TIMESTAMP(6) NOT NULL,
     status      VARCHAR(20)  NOT NULL DEFAULT 'AGENDADO'
-                CHECK (status IN ('AGENDADO', 'CONFIRMADO', 'CONCLUIDO', 'CANCELADO')),
+                CHECK (status IN ('SOLICITADO', 'AGENDADO', 'CONFIRMADO', 'CONCLUIDO', 'CANCELADO')),
     observacoes TEXT,
     criado_em   TIMESTAMP(6)
 );
@@ -79,3 +79,29 @@ CREATE TABLE IF NOT EXISTS fichas_capilares (
     observacoes        TEXT,
     atualizado_em      TIMESTAMP(6)
 );
+
+-- ─── Versão 3: agendamento online ─────────────────────────────────
+-- Comandos idempotentes: podem rodar a cada inicialização sem efeito colateral.
+
+ALTER TABLE agendamentos DROP CONSTRAINT IF EXISTS agendamentos_status_check;
+ALTER TABLE agendamentos ADD CONSTRAINT agendamentos_status_check
+    CHECK (status IN ('SOLICITADO', 'AGENDADO', 'CONFIRMADO', 'CONCLUIDO', 'CANCELADO'));
+ALTER TABLE agendamentos ADD COLUMN IF NOT EXISTS origem VARCHAR(20) NOT NULL DEFAULT 'STUDIO';
+ALTER TABLE agendamentos ADD COLUMN IF NOT EXISTS token VARCHAR(40);
+ALTER TABLE agendamentos ADD COLUMN IF NOT EXISTS motivo_cancelamento VARCHAR(255);
+ALTER TABLE agendamentos ADD COLUMN IF NOT EXISTS atualizado_em TIMESTAMP(6);
+CREATE UNIQUE INDEX IF NOT EXISTS ux_agendamentos_token ON agendamentos (token);
+CREATE INDEX IF NOT EXISTS idx_agendamentos_status ON agendamentos (status);
+
+ALTER TABLE servicos ADD COLUMN IF NOT EXISTS online BOOLEAN NOT NULL DEFAULT TRUE;
+
+CREATE TABLE IF NOT EXISTS configuracoes (
+    chave VARCHAR(60) PRIMARY KEY,
+    valor TEXT
+);
+
+-- v3.1: preço "a partir de"
+ALTER TABLE servicos ADD COLUMN IF NOT EXISTS preco_a_partir BOOLEAN NOT NULL DEFAULT TRUE;
+
+-- v3.2: LGPD - registro do aceite da política de privacidade
+ALTER TABLE clientes ADD COLUMN IF NOT EXISTS privacidade_aceita_em TIMESTAMP(6);

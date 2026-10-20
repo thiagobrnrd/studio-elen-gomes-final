@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class Agendamento {
 
     public enum Status {
-        AGENDADO, CONFIRMADO, CONCLUIDO, CANCELADO
+        SOLICITADO, AGENDADO, CONFIRMADO, CONCLUIDO, CANCELADO
     }
 
     @Id
@@ -41,11 +41,32 @@ public class Agendamento {
     @Column(columnDefinition = "TEXT")
     private String observacoes;
 
+    /** STUDIO = marcado pela Elen no painel; ONLINE = pedido feito pela cliente no link /agendar. */
+    @Builder.Default
+    @Column(nullable = false, length = 20)
+    private String origem = "STUDIO";
+
+    /** Código secreto do link que a cliente usa para acompanhar/cancelar o pedido online. */
+    @Column(length = 40, unique = true)
+    private String token;
+
+    @Column(name = "motivo_cancelamento")
+    private String motivoCancelamento;
+
     @Column(name = "criado_em", updatable = false)
     private LocalDateTime criadoEm;
+
+    @Column(name = "atualizado_em")
+    private LocalDateTime atualizadoEm;
 
     @PrePersist
     public void prePersist() {
         this.criadoEm = LocalDateTime.now();
+        this.atualizadoEm = this.criadoEm;
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.atualizadoEm = LocalDateTime.now();
     }
 }
