@@ -19,15 +19,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Monta a conexão do banco a partir de DATABASE_URL.
- *
- * Aceita a string que o Neon mostra no painel
- * ("postgresql://usuario:senha@host/banco?sslmode=require") e converte para o
- * formato JDBC que o Spring precisa. Também aceita uma URL já em formato JDBC.
- *
- * Também lê o arquivo .env da raiz do projeto (ver carregarDotEnv).
- */
 public class DatabaseUrlEnvironmentPostProcessor implements EnvironmentPostProcessor, Ordered {
 
     @Override
@@ -83,12 +74,6 @@ public class DatabaseUrlEnvironmentPostProcessor implements EnvironmentPostProce
         env.getPropertySources().addFirst(new MapPropertySource("studioDatabaseUrl", props));
     }
 
-    /**
-     * Lê o .env da pasta atual (e da pasta pai, caso o programa seja iniciado de
-     * dentro de uma subpasta). Aceita arquivos salvos pelo Bloco de Notas/PowerShell
-     * (UTF-8 com BOM ou UTF-16), aspas nos valores e comentários com #.
-     * Variáveis de ambiente de verdade continuam tendo prioridade sobre o .env.
-     */
     private static List<Path> carregarDotEnv(ConfigurableEnvironment env) {
         Path dir = Paths.get(System.getProperty("user.dir")).toAbsolutePath();
         List<Path> candidatos = new ArrayList<>();
@@ -124,7 +109,6 @@ public class DatabaseUrlEnvironmentPostProcessor implements EnvironmentPostProce
                     }
                     valores.put(chave, valor);
                 }
-                // addLast: variáveis definidas no sistema/painel do deploy ganham do .env
                 env.getPropertySources().addLast(new MapPropertySource("dotenv:" + arquivo, valores));
                 System.out.println("[Studio] .env carregado: " + arquivo + " (" + valores.size() + " variaveis)");
                 break;
@@ -135,7 +119,6 @@ public class DatabaseUrlEnvironmentPostProcessor implements EnvironmentPostProce
         return candidatos;
     }
 
-    /** Mantém sslmode e descarta parâmetros que o driver JDBC não entende (ex.: channel_binding). */
     private static String jdbcQuery(String rawQuery, String host) {
         String sslmode = null;
         if (rawQuery != null) {

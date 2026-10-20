@@ -6,11 +6,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-/**
- * Monta os textos dos lembretes e o link wa.me que abre o WhatsApp com a
- * mensagem já escrita. Os modelos aceitam os campos {nome}, {quando}, {hora},
- * {servico} e {studio}.
- */
 public final class MensagemLembrete {
 
     public static final String PADRAO_HORARIO = "Olá, {nome}! Passando para lembrar do seu horário {quando} às {hora} "
@@ -32,7 +27,6 @@ public final class MensagemLembrete {
         return nomeCompleto.trim().split("\\s+")[0];
     }
 
-    /** "hoje", "amanhã" ou "dia 05/10". */
     public static String quando(LocalDate dia, LocalDate hoje) {
         if (dia.equals(hoje)) {
             return "hoje";
@@ -60,7 +54,6 @@ public final class MensagemLembrete {
                 .replace("{studio}", studio);
     }
 
-    /** Link que abre a conversa no WhatsApp com a mensagem pronta. */
     public static String linkWhatsApp(String telefoneInternacional, String mensagem) {
         String texto = URLEncoder.encode(mensagem, StandardCharsets.UTF_8).replace("+", "%20");
         return "https://wa.me/" + telefoneInternacional + "?text=" + texto;

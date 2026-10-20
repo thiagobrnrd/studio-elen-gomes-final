@@ -18,11 +18,6 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Pedidos de agendamento feitos pela cliente na página pública (/agendar).
- * O pedido entra como SOLICITADO (horário já reservado) e a Elen aprova ou recusa.
- * Se a aprovação automática estiver ligada, entra direto como CONFIRMADO.
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -126,8 +121,6 @@ public class PedidoOnlineService {
         return agendamentoRepository.save(a);
     }
 
-    // ─── Painel da Elen ───────────────────────────────────────────────
-
     @Transactional(readOnly = true)
     public List<Agendamento> pendentes() {
         return agendamentoRepository.findByStatusOrderByDataHoraAsc(Agendamento.Status.SOLICITADO);
@@ -179,9 +172,6 @@ public class PedidoOnlineService {
         return agendamentoRepository.countByClienteId(a.getCliente().getId()) <= 1;
     }
 
-    // ─── internos ─────────────────────────────────────────────────────
-
-    /** Procura a cliente pelo WhatsApp (independente de como foi digitado). Se não achar, prepara uma nova. */
     private Cliente encontrarOuCriarCliente(String nome, String whatsapp) {
         return clienteRepository.findAll().stream()
                 .filter(c -> TelefoneUtil.paraWhatsApp(c.getTelefone()).map(whatsapp::equals).orElse(false))

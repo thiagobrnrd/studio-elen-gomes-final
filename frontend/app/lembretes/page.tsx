@@ -26,7 +26,6 @@ export default function Lembretes() {
   }, []);
   useEffect(() => { load(); }, [load]);
 
-  // O link abre o WhatsApp numa nova aba (via <a target=_blank>); em seguida marcamos como enviado.
   async function marcar(l: Lembrete) {
     try {
       await api(`/whatsapp/marcar?agendamentoId=${l.agendamentoId}&tipo=${l.tipo}`, { method: 'POST' });

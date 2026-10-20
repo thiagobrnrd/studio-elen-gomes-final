@@ -30,7 +30,7 @@ public class Notificacao {
     @Enumerated(EnumType.STRING)
     private StatusNotificacao status;
 
-    private String canal; 
+    private String canal;
     @Column(columnDefinition = "TEXT")
     private String mensagem;
     private LocalDateTime enviadaEm;

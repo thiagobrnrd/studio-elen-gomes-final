@@ -7,7 +7,6 @@ import java.util.Deque;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/** Limite simples em memória (por IP) para a página pública não ser usada por robôs. */
 @Component
 public class LimiteRequisicoes {
     private final Map<String, Deque<Long>> acessos = new ConcurrentHashMap<>();
@@ -20,7 +19,7 @@ public class LimiteRequisicoes {
             if (fila.size() >= maximo) return false;
             fila.addLast(agora);
         }
-        if (acessos.size() > 10_000) acessos.clear(); // evita crescer sem limite
+        if (acessos.size() > 10_000) acessos.clear();
         return true;
     }
 }

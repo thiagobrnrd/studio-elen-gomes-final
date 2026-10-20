@@ -4,10 +4,6 @@ import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.Set;
 
-/**
- * Configurações do studio já convertidas para tipos úteis.
- * diasFuncionamento usa DayOfWeek (segunda = MONDAY ...).
- */
 public record StudioConfig(
         boolean onlineAtivo,
         boolean aprovacaoAutomatica,

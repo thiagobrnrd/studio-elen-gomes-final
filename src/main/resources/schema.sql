@@ -1,8 +1,3 @@
--- Estrutura do banco do Studio Elen Gomes.
--- O Spring executa este arquivo toda vez que o backend sobe (spring.sql.init).
--- Por usar "IF NOT EXISTS", ele só cria o que ainda não existe: num banco novo
--- do Neon cria todas as tabelas; num banco já criado não altera nada.
-
 CREATE TABLE IF NOT EXISTS clientes (
     id              VARCHAR(36)  PRIMARY KEY,
     nome            VARCHAR(150) NOT NULL,
@@ -80,9 +75,6 @@ CREATE TABLE IF NOT EXISTS fichas_capilares (
     atualizado_em      TIMESTAMP(6)
 );
 
--- ─── Versão 3: agendamento online ─────────────────────────────────
--- Comandos idempotentes: podem rodar a cada inicialização sem efeito colateral.
-
 ALTER TABLE agendamentos DROP CONSTRAINT IF EXISTS agendamentos_status_check;
 ALTER TABLE agendamentos ADD CONSTRAINT agendamentos_status_check
     CHECK (status IN ('SOLICITADO', 'AGENDADO', 'CONFIRMADO', 'CONCLUIDO', 'CANCELADO'));
@@ -100,8 +92,6 @@ CREATE TABLE IF NOT EXISTS configuracoes (
     valor TEXT
 );
 
--- v3.1: preço "a partir de"
 ALTER TABLE servicos ADD COLUMN IF NOT EXISTS preco_a_partir BOOLEAN NOT NULL DEFAULT TRUE;
 
--- v3.2: LGPD - registro do aceite da política de privacidade
 ALTER TABLE clientes ADD COLUMN IF NOT EXISTS privacidade_aceita_em TIMESTAMP(6);

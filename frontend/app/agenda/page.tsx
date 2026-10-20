@@ -18,7 +18,7 @@ export default function Agenda() {
   const [novo, setNovo] = useState(false);
   const [res, setRes] = useState<Agendamento | null>(null);
   const [pay, setPay] = useState<Agendamento | null>(null);
-  const [aviso, setAviso] = useState<Agendamento | null>(null); // avisar cliente após remarcar
+  const [aviso, setAviso] = useState<Agendamento | null>(null);
 
   const load = useCallback(async () => {
     setErr('');
@@ -115,7 +115,6 @@ export default function Agenda() {
   </Shell></Guard>;
 }
 
-// ─── Novo agendamento ─────────────────────────────────────────────
 function NovoAgendamento({ date, clients, services, onClose, onSaved }: {
   date: string; clients: Cliente[]; services: Servico[]; onClose: () => void; onSaved: (d: string) => void;
 }) {
@@ -171,7 +170,6 @@ function NovoAgendamento({ date, clients, services, onClose, onSaved }: {
   </Modal>;
 }
 
-// ─── Remarcação ────────────────────────────────────────────────────
 function Remarcar({ a, onClose, onSaved }: { a: Agendamento; onClose: () => void; onSaved: (a: Agendamento) => void }) {
   const inicial = a.dataHora.slice(0, 10) < hojeISO() ? hojeISO() : a.dataHora.slice(0, 10);
   const [dia, setDia] = useState(inicial);
@@ -236,7 +234,6 @@ function AvisarRemarcacao({ a, onClose }: { a: Agendamento; onClose: () => void 
   </Modal>;
 }
 
-// ─── Pagamento ─────────────────────────────────────────────────────
 function Pagamento({ a, onClose, onSaved }: { a: Agendamento; onClose: () => void; onSaved: () => void }) {
   const [valor, setValor] = useState(String(a.valor ?? 0));
   const [forma, setForma] = useState('PIX');

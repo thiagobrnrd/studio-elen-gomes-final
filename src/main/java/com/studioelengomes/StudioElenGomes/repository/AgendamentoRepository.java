@@ -15,11 +15,9 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, String
 
     List<Agendamento> findByStatusOrderByDataHoraAsc(Agendamento.Status status);
 
-    // Usado pelos lembretes de WhatsApp (retorno): atendimentos concluídos no período
     List<Agendamento> findByStatusAndDataHoraBetweenOrderByDataHoraAsc(
             Agendamento.Status status, LocalDateTime inicio, LocalDateTime fim);
 
-    // A cliente já tem outro atendimento depois deste? (então já voltou)
     boolean existsByClienteIdAndDataHoraAfterAndStatusIn(
             String clienteId, LocalDateTime dataHora, Collection<Agendamento.Status> status);
 
@@ -31,9 +29,7 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, String
 
     long countByClienteId(String clienteId);
 
-    // ─── Agendamento online ───────────────────────────────────────────
     java.util.Optional<Agendamento> findByToken(String token);
-
 
     long countByStatus(Agendamento.Status status);
 
@@ -45,7 +41,6 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, String
 
     Agendamento findFirstByStatusOrderByCriadoEmDesc(Agendamento.Status status);
 
-    /** Trava curta (dentro da transação) para dois pedidos simultâneos não pegarem o mesmo horário. */
     @org.springframework.data.jpa.repository.Query(value = "select 1 from (select pg_advisory_xact_lock(4242)) t", nativeQuery = true)
     Integer travarAgenda();
 }

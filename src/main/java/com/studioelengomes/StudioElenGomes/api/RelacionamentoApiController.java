@@ -29,7 +29,6 @@ public class RelacionamentoApiController {
     private final ServicoService servicoService;
     private final DisponibilidadeService disponibilidadeService;
 
-
     @Value("${studio.nome:Studio Elen Gomes}")
     private String studioNome;
 
@@ -88,10 +87,6 @@ public class RelacionamentoApiController {
         return new Resumo(aniversarios, confirmacoes, sugestoes);
     }
 
-    /**
-     * Horários livres de um dia, de 30 em 30 minutos, dentro do expediente.
-     * Use agendamentoId (remarcação: ignora o próprio atendimento) ou servicoId (novo agendamento).
-     */
     @GetMapping("/horarios-disponiveis")
     @Transactional(readOnly = true)
     public List<DisponibilidadeService.Slot> horariosDisponiveis(@RequestParam(required = false) String agendamentoId,

@@ -41,12 +41,10 @@ public class Agendamento {
     @Column(columnDefinition = "TEXT")
     private String observacoes;
 
-    /** STUDIO = marcado pela Elen no painel; ONLINE = pedido feito pela cliente no link /agendar. */
     @Builder.Default
     @Column(nullable = false, length = 20)
     private String origem = "STUDIO";
 
-    /** Código secreto do link que a cliente usa para acompanhar/cancelar o pedido online. */
     @Column(length = 40, unique = true)
     private String token;
 

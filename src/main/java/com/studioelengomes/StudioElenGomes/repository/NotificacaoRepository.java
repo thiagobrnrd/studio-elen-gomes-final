@@ -8,7 +8,6 @@ import java.util.List;
 
 public interface NotificacaoRepository extends JpaRepository<Notificacao, Long> {
 
-    // Corrigido: String em vez de Long (Agendamento usa UUID/String)
     boolean existsByAgendamentoIdAndTipo(String agendamentoId, Notificacao.TipoNotificacao tipo);
 
     List<Notificacao> findByStatus(Notificacao.StatusNotificacao status);

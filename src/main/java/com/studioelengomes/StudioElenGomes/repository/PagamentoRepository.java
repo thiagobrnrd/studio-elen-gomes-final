@@ -16,15 +16,12 @@ public interface PagamentoRepository extends JpaRepository<Pagamento, String> {
 
     boolean existsByAgendamentoId(String agendamentoId);
 
-    // Pagamentos num período
     @Query("SELECT p FROM Pagamento p WHERE p.pagoEm BETWEEN :inicio AND :fim ORDER BY p.pagoEm DESC")
     List<Pagamento> findByPeriodo(@Param("inicio") LocalDateTime inicio, @Param("fim") LocalDateTime fim);
 
-    // Total arrecadado num período
     @Query("SELECT COALESCE(SUM(p.valor), 0) FROM Pagamento p WHERE p.pagoEm BETWEEN :inicio AND :fim")
     BigDecimal totalPorPeriodo(@Param("inicio") LocalDateTime inicio, @Param("fim") LocalDateTime fim);
 
-    // Total por forma de pagamento num período
     @Query("""
                 SELECT p.formaPagamento, COALESCE(SUM(p.valor), 0)
                 FROM Pagamento p
@@ -33,7 +30,6 @@ public interface PagamentoRepository extends JpaRepository<Pagamento, String> {
             """)
     List<Object[]> totalPorFormaPagamento(@Param("inicio") LocalDateTime inicio, @Param("fim") LocalDateTime fim);
 
-    // Serviços mais realizados num período
     @Query("""
                 SELECT p.agendamento.servico.nome, COUNT(p), COALESCE(SUM(p.valor), 0)
                 FROM Pagamento p
@@ -43,7 +39,6 @@ public interface PagamentoRepository extends JpaRepository<Pagamento, String> {
             """)
     List<Object[]> servicosMaisRealizados(@Param("inicio") LocalDateTime inicio, @Param("fim") LocalDateTime fim);
 
-    // Clientes que mais gastaram num período
     @Query("""
                 SELECT p.agendamento.cliente.nome, COUNT(p), COALESCE(SUM(p.valor), 0)
                 FROM Pagamento p

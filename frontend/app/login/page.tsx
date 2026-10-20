@@ -3,14 +3,6 @@
 import { useEffect, useState } from 'react';
 import { API, getToken, setToken } from '../../lib/api';
 
-/**
- * Login sobre a arte oficial do Studio Elen Gomes.
- *
- * A imagem fica num "palco" com a mesma proporção dela (1670×941). O formulário
- * é posicionado em porcentagem desse palco, exatamente sobre o quadro dourado,
- * então continua alinhado em qualquer tamanho de tela. Em celular (tela em pé)
- * a arte vai para o topo e o formulário fica logo abaixo.
- */
 export default function Login() {
   const [u, setU] = useState('');
   const [p, setP] = useState('');

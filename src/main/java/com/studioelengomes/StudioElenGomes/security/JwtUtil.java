@@ -40,7 +40,6 @@ public class JwtUtil {
             int expIdx = payload.indexOf(expKey);
             if (subIdx < 0 || expIdx < 0) return null;
 
-            // O início do valor é o índice da chave MAIS o tamanho da chave (sem somar a mais)
             int subStart = subIdx + subKey.length();
             int subEnd = payload.indexOf('"', subStart);
             int expStart = expIdx + expKey.length();

@@ -1,10 +1,5 @@
-// Datas sempre no horário local do navegador (o studio fica em São Paulo).
-// Antes o sistema usava toISOString(), que é UTC: depois das 21h a agenda
-// abria no dia seguinte.
-
 const pad = (n: number) => String(n).padStart(2, '0');
 
-/** Preço para a cliente: "a partir de R$ 90,00" quando o valor varia. */
 export function precoCliente(v: number, aPartir?: boolean) { return (aPartir ? 'a partir de ' : '') + money(v); }
 
 export function hojeISO(d = new Date()) {
@@ -18,7 +13,6 @@ export function somarDias(iso: string, dias: number) {
   return hojeISO(new Date(y, m - 1, d + dias));
 }
 
-/** "2026-10-16T14:30:00" → Date local (sem conversão de fuso). */
 export function parseLocal(s: string) {
   const [data, hora = '00:00'] = s.split('T');
   const [y, m, d] = data.split('-').map(Number);
@@ -39,13 +33,11 @@ export const money = (n: number | null | undefined) =>
 
 export const primeiroNome = (nome: string) => (nome || '').trim().split(/\s+/)[0] || '';
 
-/** Link wa.me com a mensagem pronta. `numero` já vem do backend no formato 55DDDNUMERO. */
 export function waLink(numero: string | null | undefined, mensagem: string) {
   if (!numero) return null;
   return `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`;
 }
 
-/** Máscara simples de telefone brasileiro enquanto digita. */
 export function mascaraTelefone(v: string) {
   const d = v.replace(/\D/g, '').slice(0, 11);
   if (d.length <= 2) return d ? `(${d}` : '';
@@ -65,7 +57,6 @@ export const mesCurto = (iso: string) =>
 export const dataHoraLonga = (s: string) => `${dataLonga(s.slice(0, 10))}, às ${hora(s)}`;
 
 const DIAS = ['', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
-/** [2,3,4,5,6] → "Ter a Sáb"; [1,3,5] → "Seg, Qua, Sex". */
 export function resumoDias(dias: number[]) {
   const d = [...dias].sort((a, b) => a - b);
   if (!d.length) return '';
@@ -74,7 +65,6 @@ export function resumoDias(dias: number[]) {
   return d.map((x) => DIAS[x]).join(', ');
 }
 
-/** Arquivo .ics para "Adicionar ao calendário" (funciona no iPhone, Android e Outlook). */
 export function baixarIcs(titulo: string, inicioIso: string, duracaoMin: number, local?: string | null, descricao?: string) {
   const ini = parseLocal(inicioIso);
   const fim = new Date(ini.getTime() + duracaoMin * 60000);

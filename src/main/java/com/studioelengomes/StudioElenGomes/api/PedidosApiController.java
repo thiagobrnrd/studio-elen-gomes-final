@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/** Pedidos de agendamento online — tela "Pedidos" do painel da Elen. */
 @RestController
 @RequestMapping("/api/pedidos")
 @RequiredArgsConstructor

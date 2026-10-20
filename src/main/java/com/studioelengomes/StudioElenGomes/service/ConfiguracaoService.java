@@ -14,10 +14,6 @@ import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/**
- * Lê e grava as configurações do studio (tabela "configuracoes").
- * Quando uma chave não existe no banco, usa o valor padrão abaixo.
- */
 @Service
 @RequiredArgsConstructor
 public class ConfiguracaoService {
@@ -35,12 +31,11 @@ public class ConfiguracaoService {
 
     private volatile StudioConfig cache;
 
-    /** Chaves aceitas e seus valores padrão. */
     private Map<String, String> padroes() {
         Map<String, String> m = new LinkedHashMap<>();
         m.put("online_ativo", "true");
         m.put("aprovacao_automatica", "false");
-        m.put("dias_funcionamento", "2,3,4,5,6"); // 1 = segunda ... 7 = domingo
+        m.put("dias_funcionamento", "2,3,4,5,6");
         m.put("abertura", aberturaPadrao);
         m.put("fechamento", fechamentoPadrao);
         m.put("almoco_inicio", "");
@@ -81,7 +76,7 @@ public class ConfiguracaoService {
         novos.forEach((k, v) -> {
             if (atuais.containsKey(k)) mesclado.put(k, v == null ? "" : v.trim());
         });
-        converter(mesclado); // valida antes de gravar (lança IllegalArgumentException)
+        converter(mesclado);
         mesclado.forEach((k, v) -> {
             if (novos.containsKey(k)) repository.save(new Configuracao(k, v));
         });

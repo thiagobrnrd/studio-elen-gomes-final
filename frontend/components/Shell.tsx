@@ -30,7 +30,6 @@ const mais: Item[] = [
   ['/configuracoes', '⚙', 'Configurações'],
 ];
 
-/** Toca um "plim" curto (sem arquivo de áudio). */
 function plim() {
   try {
     const Ctx = (window as any).AudioContext || (window as any).webkitAudioContext;
@@ -56,7 +55,6 @@ export default function Shell({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let vivo = true;
     async function tick() {
-      // Aba escondida/minimizada: não consulta (deixa o banco dormir). Ao voltar, atualiza na hora.
       if (document.visibilityState === 'hidden') return;
       try {
         const c = await api<{ pendentes: number; ultimo: string | null }>('/pedidos/contagem');

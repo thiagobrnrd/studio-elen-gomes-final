@@ -14,10 +14,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * Rotas abertas (sem login) usadas pela página pública de agendamento /agendar.
- * Só expõem o necessário: serviços online, horários livres e o próprio pedido (pelo token).
- */
 @RestController
 @RequestMapping("/api/publico")
 @RequiredArgsConstructor
@@ -43,7 +39,6 @@ public class PublicoApiController {
                                 String motivo, boolean podeCancelar, String studioNome, String studioWhatsapp,
                                 String endereco, String politica) {}
 
-    /** Para o monitor (cron-job.org) manter o servidor acordado sem acordar o banco. */
     @GetMapping("/ping")
     public java.util.Map<String, String> ping() {
         return java.util.Map.of("status", "ok");
@@ -77,7 +72,6 @@ public class PublicoApiController {
     @PostMapping("/agendamentos")
     public PedidoPublico pedir(@RequestBody PedidoRequest r, HttpServletRequest http) {
         if (r.hp() != null && !r.hp().isBlank()) {
-            // campo invisível preenchido = robô
             throw new IllegalArgumentException("Não foi possível enviar o pedido.");
         }
         if (!limite.permitir("pedido:" + ip(http), 6, 60 * 60 * 1000L)) {

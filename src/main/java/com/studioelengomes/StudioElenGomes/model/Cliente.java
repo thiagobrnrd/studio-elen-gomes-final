@@ -32,7 +32,6 @@ public class Cliente {
     @Column(name = "data_nascimento")
     private LocalDate dataNascimento;
 
-    /** LGPD: quando a cliente aceitou a política de privacidade (agendamento online). */
     @Column(name = "privacidade_aceita_em")
     private LocalDateTime privacidadeAceitaEm;
 

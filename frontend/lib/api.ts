@@ -15,11 +15,6 @@ function logout(): never {
   throw new Error('Sessão expirada. Faça login novamente.');
 }
 
-/**
- * Chama a API do Spring Boot com o token JWT.
- * O backend no plano gratuito (Render/Neon) pode "acordar" devagar, por isso
- * uma falha de rede é tentada mais uma vez antes de mostrar erro.
- */
 export async function api<T>(path: string, options: RequestInit = {}, tentativa = 1): Promise<T> {
   const headers = new Headers(options.headers);
   if (options.body) headers.set('Content-Type', 'application/json');
@@ -46,7 +41,6 @@ export async function api<T>(path: string, options: RequestInit = {}, tentativa 
   return data as T;
 }
 
-// ─── Tipos compartilhados ──────────────────────────────────────────
 export type Status = 'SOLICITADO' | 'AGENDADO' | 'CONFIRMADO' | 'CONCLUIDO' | 'CANCELADO';
 export type Agendamento = {
   id: string; clienteId: string; clienteNome: string; telefone: string; whatsapp: string | null;
@@ -69,7 +63,6 @@ export type Lembrete = {
   mensagem: string; link: string | null;
 };
 
-/** Chamadas da página pública /agendar (sem login). */
 export async function publicApi<T>(path: string, options: RequestInit = {}): Promise<T> {
   const headers = new Headers(options.headers);
   if (options.body) headers.set('Content-Type', 'application/json');

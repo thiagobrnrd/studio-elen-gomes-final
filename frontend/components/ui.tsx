@@ -1,7 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
 
-// ─── Toast (avisos rápidos no canto da tela) ─────────────────────
 type ToastMsg = { id: number; text: string; kind: 'ok' | 'erro' };
 const listeners = new Set<(t: ToastMsg) => void>();
 let seq = 0;
@@ -27,7 +26,6 @@ export function Toaster() {
   </div>;
 }
 
-// ─── Modal ───────────────────────────────────────────────────────
 export function Modal({ title, eyebrow, onClose, children, wide }: {
   title: string; eyebrow?: string; onClose: () => void; children: React.ReactNode; wide?: boolean;
 }) {

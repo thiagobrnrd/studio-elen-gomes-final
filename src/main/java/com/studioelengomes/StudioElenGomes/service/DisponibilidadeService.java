@@ -13,13 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * Calcula horários livres a partir das configurações do studio
- * (expediente, intervalo de almoço, dias de funcionamento, antecedência).
- *
- * Busca os atendimentos do período uma única vez e faz as contas em memória,
- * para a página pública responder rápido mesmo consultando 30 dias.
- */
 @Service
 @RequiredArgsConstructor
 public class DisponibilidadeService {
@@ -30,7 +23,6 @@ public class DisponibilidadeService {
     public record Slot(LocalDateTime dataHora, String hora) {}
     public record Dia(LocalDate data, int vagas) {}
 
-    /** Horários livres de um dia. publico=true aplica as regras da página de agendamento online. */
     @Transactional(readOnly = true)
     public List<Slot> horarios(LocalDate dia, int duracao, String ignorarId, boolean publico) {
         StudioConfig c = configuracaoService.atual();
@@ -39,7 +31,6 @@ public class DisponibilidadeService {
         return calcular(c, dia, duracao, ignorarId, publico, ocupados, LocalDateTime.now());
     }
 
-    /** Próximos dias em que o studio atende online, com a quantidade de horários livres. */
     @Transactional(readOnly = true)
     public List<Dia> diasOnline(int duracao) {
         StudioConfig c = configuracaoService.atual();
@@ -92,7 +83,7 @@ public class DisponibilidadeService {
                 if (!conflito) slots.add(new Slot(ini, t.toString()));
             }
             LocalTime prox = t.plusMinutes(c.intervaloMinutos());
-            if (!prox.isAfter(t)) break; // virou a meia-noite
+            if (!prox.isAfter(t)) break;
             t = prox;
         }
         return slots;

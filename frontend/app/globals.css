@@ -14,7 +14,6 @@ button:disabled{cursor:not-allowed;opacity:.6}
 a{color:inherit}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-/* ─── Layout ─────────────────────────────────────────────── */
 .app{min-height:100vh;display:flex;background:radial-gradient(circle at 70% -10%,rgba(190,143,71,.06),transparent 32%),var(--bg)}
 .sidebar{width:252px;background:rgba(9,8,7,.97);border-right:1px solid var(--line);padding:22px 15px;position:fixed;inset:0 auto 0 0;z-index:15;display:flex;flex-direction:column}
 .sidebar-brand{display:flex;justify-content:center;align-items:center;text-decoration:none;height:118px}
@@ -37,7 +36,6 @@ a{color:inherit}
 .mobile-header{display:none}
 .boot{min-height:100vh;display:grid;place-items:center}
 
-/* ─── Tipografia e blocos ────────────────────────────────── */
 .topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:26px}
 .eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:2.1px;color:var(--gold);font-weight:600}
 .topbar h1{font-family:'Playfair Display',serif;font-size:35px;font-weight:500;margin:5px 0 0;letter-spacing:-.3px}
@@ -100,7 +98,6 @@ input[type=date],input[type=month],input[type=datetime-local]{color-scheme:dark}
 .form-actions{display:flex;gap:10px;margin-top:20px}
 .form-actions .btn{flex:1}
 
-/* Agenda */
 .day-nav{display:flex;align-items:center;gap:6px}
 .day-label{font-family:'Playfair Display',serif;font-size:17px;margin-left:6px}
 .time-cell b{font-size:16px;color:var(--gold2)}
@@ -110,7 +107,6 @@ input[type=date],input[type=month],input[type=datetime-local]{color-scheme:dark}
 .obs{font-size:11px;color:#c9b48c;margin-top:4px;font-style:italic}
 tr.is-cancelado td{opacity:.55}
 
-/* Finance */
 .finance-bars{display:grid;gap:17px}
 .bar-label{display:flex;justify-content:space-between;gap:15px;font-size:12px;margin-bottom:7px}
 .bar-label b{color:var(--gold2)}
@@ -124,14 +120,12 @@ tr.is-cancelado td{opacity:.55}
 .rank-item small{font-size:11px;color:var(--muted);display:block;margin-top:3px}
 .rank-item strong{font-size:13px;color:var(--gold2)}
 
-/* Modal */
 .modal-overlay{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.76);backdrop-filter:blur(7px);display:grid;place-items:center;padding:20px}
 .modal-card{width:min(520px,94vw);max-height:92vh;overflow:auto;padding:28px;border:1px solid #3a3024;border-radius:18px;background:#11100e;box-shadow:0 30px 80px rgba(0,0,0,.55)}
 .modal-card.wide{width:min(640px,94vw)}
 .modal-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px}
 .modal-head h2{font-family:'Playfair Display',serif;font-weight:500;font-size:22px;margin:4px 0 0}
 
-/* Relacionamento / lembretes */
 .dashboard-main{margin-top:18px}
 .quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 .relationship-card{margin-top:18px}
@@ -154,7 +148,6 @@ tr.is-cancelado td{opacity:.55}
 .slot.selected{box-shadow:inset 0 0 0 1px #a47a3e}
 .history{margin-top:14px;font-size:11px;color:var(--muted);display:grid;gap:4px}
 
-/* Serviços */
 .service-grid{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
 .service-card{display:flex;flex-direction:column;gap:8px}
 .service-card h3{font-family:'Playfair Display',serif;font-weight:500;font-size:19px;margin:4px 0 0}
@@ -162,7 +155,6 @@ tr.is-cancelado td{opacity:.55}
 .service-card.off{opacity:.55}
 .service-card .row-actions{margin-top:auto;padding-top:8px}
 
-/* Toast */
 .toaster{position:fixed;right:20px;bottom:20px;z-index:80;display:grid;gap:8px;max-width:min(380px,90vw)}
 .toast{padding:12px 15px;border-radius:10px;background:#1b1711;border:1px solid #5c482c;color:var(--text);font-size:13px;box-shadow:0 12px 30px rgba(0,0,0,.4);display:flex;gap:9px;animation:toastIn .2s ease}
 .toast.ok{border-color:#2f5d41}
@@ -175,14 +167,10 @@ tr.is-cancelado td{opacity:.55}
 
 .mobile-nav{display:none}
 
-/* ─── Login sobre a arte oficial ─────────────────────────── */
-/* A arte tem 1670×941. O quadro dourado vai de x=1083..1577 e y=167..773.  */
 .login{position:fixed;inset:0;overflow:hidden;background:#030303}
-/* fundo desfocado para telas mais "quadradas" (preenche as faixas acima/abaixo da arte) */
 .login:before{content:"";position:absolute;inset:-40px;background:url('/images/login-background.jpg') center/cover no-repeat;filter:blur(28px) brightness(.35)}
 .login-stage{
   position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-  /* cobre a tela, mas sem cortar o quadro do formulário nas telas mais "quadradas" */
   width:max(100vw, min(177.47vh, 112vw));
   aspect-ratio:1670/941;
   container-type:inline-size;
@@ -223,7 +211,6 @@ tr.is-cancelado td{opacity:.55}
 .login-foot span{height:1px;width:clamp(22px,2cqw,36px);background:#5a4730}
 .login-foot em{font-style:normal}
 
-/* Celular / tela em pé: arte em cima, formulário embaixo */
 @media (max-aspect-ratio:1/1), (max-width:760px){
   .login{position:relative;min-height:100vh;min-height:100dvh;overflow:auto;display:flex;flex-direction:column}
   .login-stage{position:relative;left:auto;top:auto;transform:none;width:100%;aspect-ratio:auto;flex:1;display:flex;flex-direction:column;container-type:normal}
@@ -239,7 +226,6 @@ tr.is-cancelado td{opacity:.55}
   .login-foot{margin-top:18px}
 }
 
-/* ─── Responsivo ─────────────────────────────────────────── */
 @media(max-width:1150px){.stats{grid-template-columns:repeat(3,1fr)}.two,.finance-grid{grid-template-columns:1fr}}
 @media(max-width:1000px){.action-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:760px){
@@ -262,7 +248,6 @@ tr.is-cancelado td{opacity:.55}
   .table th,.table td{padding:11px 6px}
   .toaster{right:12px;left:12px;bottom:84px;max-width:none}
   .day-label{width:100%;margin:4px 0 0}
-  /* Tabelas viram cartões no celular */
   .table.cards thead{display:none}
   .table.cards tr{display:grid;grid-template-columns:62px 1fr auto;gap:6px 12px;padding:14px 2px;border-bottom:1px solid var(--line);align-items:start}
   .table.cards tr:last-child{border-bottom:0}
@@ -283,7 +268,6 @@ tr.is-cancelado td{opacity:.55}
   .modal-card{padding:22px 18px}
 }
 
-/* ═══ Página pública de agendamento (/agendar) ═════════════════════ */
 .pb{min-height:100vh;background:radial-gradient(circle at 50% -20%,rgba(216,176,106,.10),transparent 45%),#090807;color:var(--text)}
 .pb a{color:inherit}
 .pb-hero{position:relative;overflow:hidden;border-bottom:1px solid #2a231a}
@@ -383,7 +367,6 @@ tr.is-cancelado td{opacity:.55}
 @media(min-width:700px){.pb-hero-in{padding:44px 20px 34px}.pb-logo{width:170px}.pb-hero h1{font-size:34px}.pb-step{padding:22px}.pb-slots{grid-template-columns:repeat(5,1fr)}}
 @media(max-width:360px){.pb-slots{grid-template-columns:repeat(3,1fr)}}
 
-/* ═══ Painel: pedidos online e configurações ═══════════════════════ */
 .nav-badge{margin-left:auto;min-width:20px;height:20px;padding:0 6px;border-radius:99px;background:linear-gradient(180deg,#ebca8c,#c99548);color:#17120d;font-style:normal;font-size:11px;font-weight:700;display:inline-grid;place-items:center}
 .sidebar-public{display:block;margin:14px 12px 0;font-size:11.5px;color:var(--gold);text-decoration:none;opacity:.85}
 .sidebar-public:hover{opacity:1;text-decoration:underline}

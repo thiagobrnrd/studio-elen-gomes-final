@@ -21,10 +21,6 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Lembretes por WhatsApp feitos com link wa.me: o sistema diz quem avisar e
- * deixa a mensagem pronta; quem envia é a Elen, pelo WhatsApp dela.
- */
 @Service
 @RequiredArgsConstructor
 public class LembreteWhatsAppService {
@@ -33,10 +29,8 @@ public class LembreteWhatsAppService {
 
     private static final ZoneId ZONA = ZoneId.of("America/Sao_Paulo");
 
-    /** Lembrete de retorno só aparece até 30 dias depois do prazo vencido. */
     private static final int DIAS_ATRASO_MAXIMO_RETORNO = 30;
 
-    /** Até onde olhar para trás procurando atendimentos concluídos. */
     private static final int DIAS_HISTORICO_RETORNO = 400;
 
     private final AgendamentoRepository agendamentoRepository;
@@ -46,9 +40,6 @@ public class LembreteWhatsAppService {
     @Value("${studio.nome}")
     private String studioNome;
 
-    // ─── LISTAS ───────────────────────────────────────────────────────
-
-    /** Atendimentos de agora até o fim de amanhã que ainda não foram avisados. */
     @Transactional(readOnly = true)
     public List<LembreteWhatsApp> listarHorarios() {
         LocalDateTime agora = LocalDateTime.now(ZONA);
@@ -62,7 +53,6 @@ public class LembreteWhatsAppService {
                 .toList();
     }
 
-    /** Clientes que concluíram um serviço de retorno, já passou o prazo e ainda não voltaram. */
     @Transactional(readOnly = true)
     public List<LembreteWhatsApp> listarRetornos() {
         LocalDateTime agora = LocalDateTime.now(ZONA);
@@ -86,7 +76,6 @@ public class LembreteWhatsAppService {
                 .toList();
     }
 
-    /** Lembretes marcados como enviados hoje (com opção de desfazer). */
     @Transactional(readOnly = true)
     public List<LembreteWhatsApp> listarEnviadosHoje() {
         LocalDate hoje = LocalDate.now(ZONA);
@@ -101,9 +90,6 @@ public class LembreteWhatsAppService {
         return listarHorarios().size() + listarRetornos().size();
     }
 
-    // ─── AÇÕES ────────────────────────────────────────────────────────
-
-    /** Registra que o lembrete foi aberto no WhatsApp. Não duplica se já estiver marcado. */
     @Transactional
     public void marcarEnviado(String agendamentoId, TipoNotificacao tipo) {
         if (tipo != TipoNotificacao.LEMBRETE_24H && tipo != TipoNotificacao.LEMBRETE_RETORNO) {
@@ -129,15 +115,12 @@ public class LembreteWhatsAppService {
                 .build());
     }
 
-    /** Desfaz a marcação de "enviado" para o lembrete voltar à lista de pendentes. */
     @Transactional
     public void desfazer(Long notificacaoId) {
         notificacaoRepository.findById(notificacaoId)
                 .filter(n -> CANAL.equals(n.getCanal()))
                 .ifPresent(notificacaoRepository::delete);
     }
-
-    // ─── INTERNOS ─────────────────────────────────────────────────────
 
     private boolean jaEnviado(String agendamentoId, TipoNotificacao tipo) {
         return notificacaoRepository.existsByAgendamentoIdAndTipoAndCanalAndStatus(

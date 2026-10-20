@@ -31,8 +31,6 @@ public class NotificacaoService {
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy 'às' HH:mm");
 
-    // ─── LEMBRETE 24H ─────────────────────────────────────────────────
-
     public void enviarLembrete24h(Agendamento agendamento) {
         Cliente cliente = agendamento.getCliente();
 
@@ -67,8 +65,6 @@ public class NotificacaoService {
                     e.getMessage());
         }
     }
-
-    // ─── LEMBRETE DE RETORNO ──────────────────────────────────────────
 
     public void enviarLembreteRetorno(Agendamento agendamento) {
         Cliente cliente = agendamento.getCliente();
@@ -142,8 +138,6 @@ public class NotificacaoService {
                 .replace("\"", "&quot;").replace("'", "&#39;");
     }
 
-    // ─── ENVIO DE E-MAIL (método interno) ────────────────────────────
-
     private void enviarEmail(String destinatario, String assunto, String htmlBody)
             throws MessagingException, UnsupportedEncodingException {
         MimeMessage message = mailSender.createMimeMessage();
@@ -156,8 +150,6 @@ public class NotificacaoService {
 
         mailSender.send(message);
     }
-
-    // ─── REGISTRO NO BANCO ───────────────────────────────────────────
 
     private void registrarNotificacao(Agendamento agendamento, Cliente cliente,
             Notificacao.TipoNotificacao tipo, Notificacao.StatusNotificacao status,

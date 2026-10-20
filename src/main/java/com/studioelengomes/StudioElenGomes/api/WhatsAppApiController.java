@@ -8,11 +8,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * Central de lembretes por WhatsApp (link wa.me): o sistema monta a mensagem e
- * a Elen envia pelo próprio WhatsApp. Ao clicar em "Enviar", o lembrete é
- * marcado como enviado para não aparecer de novo.
- */
 @RestController
 @RequestMapping("/api/whatsapp")
 @RequiredArgsConstructor

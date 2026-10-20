@@ -13,7 +13,6 @@ export function salvarPedido(p: PedidoSalvo) {
   try { localStorage.setItem(CHAVE, JSON.stringify([p, ...lerPedidos()].slice(0, 10))); } catch {}
 }
 
-
 type InfoTopo = { nome?: string; endereco?: string | null; instagram?: string; whatsapp?: string | null; abertura?: string; fechamento?: string; diasFuncionamento?: number[]; mensagem?: string };
 
 export function Pagina({ info, children, titulo = 'Agende seu horário', semMensagem = false }: { info: InfoTopo | null; children: React.ReactNode; titulo?: string; semMensagem?: boolean }) {
@@ -38,4 +37,3 @@ export function Pagina({ info, children, titulo = 'Agende seu horário', semMens
     <footer className="pb-foot">Studio Elen Gomes · Beleza · Autoestima · Você<br /><a href="/agendar/privacidade">Política de Privacidade</a></footer>
   </div>;
 }
-

@@ -21,7 +21,6 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class AgendamentoService {
 
-    /** Maior duração de serviço considerada ao procurar conflitos (12h). */
     private static final int JANELA_CONFLITO_HORAS = 12;
 
     private final AgendamentoRepository agendamentoRepository;
@@ -56,10 +55,6 @@ public class AgendamentoService {
         return agendamentoRepository.findByDataHoraBetweenOrderByDataHoraAsc(inicio, fim);
     }
 
-    /**
-     * Verifica se o período [inicio, inicio + duração) bate com algum atendimento
-     * ativo, ignorando o próprio agendamento (útil na remarcação).
-     */
     @Transactional(readOnly = true)
     public boolean temConflito(LocalDateTime inicio, int duracaoMin, String ignorarId) {
         LocalDateTime fim = inicio.plusMinutes(duracaoMin);
@@ -86,11 +81,6 @@ public class AgendamentoService {
         return agendamentoRepository.save(agendamento);
     }
 
-    /**
-     * Remarca um atendimento: confere conflito no novo horário, guarda o histórico,
-     * volta o status para AGENDADO (o novo horário ainda precisa ser confirmado) e
-     * libera um novo lembrete de WhatsApp para a cliente.
-     */
     @Transactional
     public Agendamento remarcar(String id, LocalDateTime novaDataHora, String motivo) {
         if (novaDataHora == null) {
@@ -119,7 +109,6 @@ public class AgendamentoService {
                 .motivo(motivo == null || motivo.isBlank() ? "Solicitação de remarcação" : motivo.trim())
                 .build());
 
-        // O lembrete enviado era do horário antigo: libera um novo para o horário novo.
         notificacaoRepository.deleteByAgendamentoIdAndTipoAndCanal(
                 salvo.getId(), Notificacao.TipoNotificacao.LEMBRETE_24H, LembreteWhatsAppService.CANAL);
         return salvo;

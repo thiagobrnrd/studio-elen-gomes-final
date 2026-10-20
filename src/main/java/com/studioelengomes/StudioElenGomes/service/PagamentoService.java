@@ -23,8 +23,6 @@ public class PagamentoService {
     private final PagamentoRepository pagamentoRepository;
     private final AgendamentoRepository agendamentoRepository;
 
-    // ─── REGISTRAR PAGAMENTO ──────────────────────────────────────────
-
     @Transactional
     public Pagamento registrar(String agendamentoId, Pagamento pagamento) {
         Agendamento agendamento = agendamentoRepository.findById(agendamentoId)
@@ -37,11 +35,9 @@ public class PagamentoService {
             throw new IllegalArgumentException("Informe um valor válido.");
         }
 
-        // Marca agendamento como CONCLUIDO
         agendamento.setStatus(Agendamento.Status.CONCLUIDO);
         agendamentoRepository.save(agendamento);
 
-        // Salva pagamento
         pagamento.setAgendamento(agendamento);
         pagamento.setPagoEm(LocalDateTime.now());
         return pagamentoRepository.save(pagamento);
@@ -55,8 +51,6 @@ public class PagamentoService {
         return pagamentoRepository.findByAgendamentoId(agendamentoId);
     }
 
-    // ─── RELATÓRIO ────────────────────────────────────────────────────
-
     @Transactional(readOnly = true)
     public Map<String, Object> gerarRelatorio(YearMonth mesAno) {
         LocalDateTime inicio = mesAno.atDay(1).atStartOfDay();
@@ -64,28 +58,23 @@ public class PagamentoService {
 
         Map<String, Object> relatorio = new LinkedHashMap<>();
 
-        // Total geral
         BigDecimal total = pagamentoRepository.totalPorPeriodo(inicio, fim);
         relatorio.put("total", total);
         relatorio.put("mesAno", mesAno);
 
-        // Pagamentos do período
         List<Pagamento> pagamentos = pagamentoRepository.findByPeriodo(inicio, fim);
         relatorio.put("pagamentos", pagamentos);
         relatorio.put("quantidadeAtendimentos", pagamentos.size());
 
-        // Por forma de pagamento
         Map<String, BigDecimal> porForma = new LinkedHashMap<>();
         for (Object[] row : pagamentoRepository.totalPorFormaPagamento(inicio, fim)) {
             porForma.put(row[0].toString(), (BigDecimal) row[1]);
         }
         relatorio.put("porFormaPagamento", porForma);
 
-        // Serviços mais realizados
         List<Object[]> servicos = pagamentoRepository.servicosMaisRealizados(inicio, fim);
         relatorio.put("servicosMaisRealizados", servicos);
 
-        // Clientes que mais gastaram
         List<Object[]> clientes = pagamentoRepository.clientesQueMaisGastaram(inicio, fim);
         relatorio.put("clientesDestaque", clientes);
 

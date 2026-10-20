@@ -3,7 +3,6 @@ package com.studioelengomes.StudioElenGomes.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-/** Configurações do studio editáveis pelo painel (chave → valor). */
 @Entity
 @Table(name = "configuracoes")
 @Data

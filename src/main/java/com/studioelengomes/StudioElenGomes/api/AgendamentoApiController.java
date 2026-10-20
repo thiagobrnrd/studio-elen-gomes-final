@@ -64,7 +64,6 @@ public class AgendamentoApiController {
         return dto(service.alterarStatus(id, value));
     }
 
-    /** Remarcação (mesmo comportamento de POST /api/agendamentos/{id}/remarcacoes). */
     @PostMapping("/{id}/reschedule")
     public AgendamentoDto remarcar(@PathVariable String id, @Valid @RequestBody RemarcacaoRequest r) {
         return dto(service.remarcar(id, r.novaDataHora(), r.motivo()));
