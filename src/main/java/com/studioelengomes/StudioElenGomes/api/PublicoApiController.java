@@ -43,6 +43,12 @@ public class PublicoApiController {
                                 String motivo, boolean podeCancelar, String studioNome, String studioWhatsapp,
                                 String endereco, String politica) {}
 
+    /** Para o monitor (cron-job.org) manter o servidor acordado sem acordar o banco. */
+    @GetMapping("/ping")
+    public java.util.Map<String, String> ping() {
+        return java.util.Map.of("status", "ok");
+    }
+
     @GetMapping("/info")
     public Info info() {
         StudioConfig c = configuracaoService.atual();

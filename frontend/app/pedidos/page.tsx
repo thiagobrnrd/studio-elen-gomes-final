@@ -41,7 +41,7 @@ export default function Pedidos() {
     try { setNotif('Notification' in window ? Notification.permission : 'unsupported'); } catch { setNotif('unsupported'); }
     const h = () => load();
     window.addEventListener('pedidos-atualizados', h);
-    const t = setInterval(load, 30000);
+    const t = setInterval(() => { if (document.visibilityState !== 'hidden') load(); }, 30000);
     return () => { window.removeEventListener('pedidos-atualizados', h); clearInterval(t); };
   }, [load]);
 
